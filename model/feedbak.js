@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
+import dotenv from 'dotenv'
 
+dotenv.config()
 // connect to database
 mongoose
   .connect(
-    "mongodb://root:E3BvZsLQl3dauNVqOohDm0x5@k2.liara.cloud:34395/my-app?authSource=admin"
+    process.env.URL_DATABASE
   )
   .then(() => {
     console.log("Connected!");
@@ -13,6 +15,7 @@ mongoose
   });
 
 const Schema = mongoose.Schema;
+
 const schemaFeedback = new Schema({
   title: String,
   body: String,
@@ -20,5 +23,26 @@ const schemaFeedback = new Schema({
   points: Number
 });
 
+
+const schemaUser = new Schema({
+  username: {
+    type: String,
+    required : true
+  },
+  email: {
+    type: String,
+    required : true,
+    // unique : true
+  },
+  password: {
+    type: String,
+    required : true
+  },
+});
+
+
+
 export const modelFeedback = mongoose.model("modelFeedback", schemaFeedback);
+export const modelUser = mongoose.model("modelUser", schemaUser);
+
 

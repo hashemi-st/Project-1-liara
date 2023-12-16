@@ -1,21 +1,33 @@
 import express from "express";
 import postRoutes from './routes/post-routes.js';
 import getRoutes from './routes/get-routes.js';
-import {modelFeedback} from './model/feedbak.js'
+import session from "express-session";
+import connectMongoDBSession from 'connect-mongodb-session'
+import dotenv from 'dotenv'
 
+dotenv.config()
 const app = express();
 
-// try{
+const MongoDBStore = connectMongoDBSession(session)
 
-//     await modelFeedback.deleteMany({});
-//     console.log('pak shod')
+const store = new MongoDBStore({
+    uri : process.env.URL_DATABASE,
+    collection: 'mySessions'
+    })
 
-// }catch(e){
-// console.error(e)
-// }
+app.use(session({
+    secret : 'key that will sign cookie',
+    resave: false,
+    saveUninitialized: false,
+    store : store
+})) 
 
-// for define request
+
+
+
+// app.use(express.urlencoded({ extended: true }));
 app.use(express.urlencoded({ extended: false }));
+
 app.use(express.json());
 
 app.use(postRoutes)
