@@ -12,7 +12,7 @@ const MongoDBStore = connectMongoDBSession(session)
 
 const store = new MongoDBStore({
     uri : process.env.URL_DATABASE,
-    collection: 'mySessions'
+    collection: 'Sessions'
     })
 
 app.use(session({
@@ -21,8 +21,6 @@ app.use(session({
     saveUninitialized: false,
     store : store
 })) 
-
-
 
 
 // app.use(express.urlencoded({ extended: true }));

@@ -32,7 +32,7 @@ const schemaUser = new Schema({
   email: {
     type: String,
     required : true,
-    // unique : true
+    unique : true
   },
   password: {
     type: String,
@@ -42,7 +42,7 @@ const schemaUser = new Schema({
 
 
 
-export const modelFeedback = mongoose.model("modelFeedback", schemaFeedback);
-export const modelUser = mongoose.model("modelUser", schemaUser);
+export const Feedbacks = mongoose.model("Feedbacks", schemaFeedback);
+export const Users = mongoose.model("Users", schemaUser);
 
 

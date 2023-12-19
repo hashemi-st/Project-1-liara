@@ -3,7 +3,7 @@ import express from "express";
 
 const getRoutes = express.Router();
 
-getRoutes.get("/feedback", GetControllers.getFeedback)
 
+getRoutes.get("/feedback", GetControllers.getFeedback)
 
 export default getRoutes;
