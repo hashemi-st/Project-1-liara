@@ -23,24 +23,12 @@ const schemaFeedback = new Schema({
   points: Number
 });
 
-
 const schemaUser = new Schema({
-  username: {
-    type: String,
-    required : true
-  },
-  email: {
-    type: String,
-    required : true,
-    unique : true
-  },
-  password: {
-    type: String,
-    required : true
-  },
+  username: String,
+  email:String,
+  password: String
+
 });
-
-
 
 export const Feedbacks = mongoose.model("Feedbacks", schemaFeedback);
 export const Users = mongoose.model("Users", schemaUser);

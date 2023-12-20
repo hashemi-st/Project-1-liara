@@ -1,42 +1,54 @@
 import { Feedbacks, Users } from "../model/feedbak.js";
+import AppError from "../utils/AppError.js";
 import bcrypt from "bcrypt";
+import { errorcode } from "../utils/errorCodes.js";
+import { registerValidate, feedbackValidate } from "../utils/utils.js";
 
 class PostControllers {
   static async addFeedback(req, res) {
+    const { error, value } = feedbackValidate(req.body);
+    if (error) throw error
+
     const myObject = new Feedbacks({
-      title: req.body.title,
-      body: req.body.body,
-      imgURL: req.body.imgURL,
+      title: value.title,
+      body: value.body,
+      imgURL: value.imgURL,
     });
-    let result;
-    try {
-      await myObject.save();
-      result = await Feedbacks.find({});
-    } catch (e) {
-      res.status(400).send("Invalid data request!");
-    }
-    res.send(result);
+
+    await myObject.save();
+    const result = await Feedbacks.find({});
+
+    res.status(200).send(result);
   }
 
   static async addPoints(req, res) {
-    let result;
-    try {
-      result = await Feedbacks.findByIdAndUpdate(req.body.id, {
-        points: req.body.points,
-      });
-      await result.save();
-    } catch (e) {
-      res.status(400).send("Invalid data request!");
+    const { id, points } = req.body;
+    if (!id || !points) {
+      throw new AppError(errorcode.INVALID_REQUEST, "bad data request", 400);
     }
-    res.send(result);
+
+    const result = await Feedbacks.findByIdAndUpdate(req.body.id, {
+      points: req.body.points,
+    });
+    await result.save();
+
+    res.status(200).send("successfully voted");
   }
 
   static async register(req, res) {
-    const { username, email, password } = req.body;
+    const { error, value } = registerValidate(req.body);
+    if (error) throw error
+
+    const { username, email, password } = value;
 
     let user = await Users.findOne({ email });
     if (user) {
-      res.send({ error: true, message: "this email is already there!" });
+      // res.send({ error: true, message: "this email is already there!" });
+      throw new AppError(
+        errorcode.INVALID_SUBSCRIPTION,
+        "this email is already there!",
+        400
+      );
     }
     const hashed = await bcrypt.hash(password, 12);
     user = new Users({
@@ -45,37 +57,33 @@ class PostControllers {
       password: hashed,
     });
     await user.save();
-    res.send("user was registered!");
+    res.status(200).send("user was registered!");
   }
 
   static async login(req, res) {
     const { email, password } = req.body;
-    try{
-        const user = await Users.findOne({ email });
+    const user = await Users.findOne({ email });
     if (!user) {
-      res.status(400).json({ error: true, message: "email is wrong!" })
+      throw new AppError(300, "email is wrong!", 400);
     } else {
       const isMatched = await bcrypt.compare(password, user.password);
       if (!isMatched) {
-        res.status(400).json({ error: true, message: "password is wrong!" })
+        throw new AppError(301, "password is wrong!", 400);
       }
     }
-    req.session.isAuth = true
+    req.session.isAuth = true;
 
-    const {_id, username} = user
-    res.status(200).json({_id, username, email});
-    }catch (e) {
-    console.log(e)
-  }
+    const { _id, username } = user;
+    res.status(200).json({ _id, username, email });
   }
 
-  static async logout(req, res){
-  req.session.destroy(err=>{
-  if(err){
-    throw err
-  }
-  res.send("logout seccessfully")
-})
+  static async logout(req, res) {
+    req.session.destroy((err) => {
+      if (err) {
+        throw err;
+      }
+      res.send("logout seccessfully");
+    });
   }
 }
 export default PostControllers;
