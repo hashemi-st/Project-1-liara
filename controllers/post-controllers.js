@@ -11,28 +11,34 @@ class PostControllers {
 
     const myObject = new Feedbacks({
       title: value.title,
-      body: value.body,
-      imgURL: value.imgURL,
+      body: value.body
     });
 
     await myObject.save();
-    const result = await Feedbacks.find({});
-
-    res.status(200).send(result);
+    res.status(200).send("feedback was added successfully");
   }
 
-  static async addPoints(req, res) {
-    const { id, points } = req.body;
-    if (!id || !points) {
+  static async addVote(req, res) {
+    const { postId, userId, vote } = req.body;
+    if (!postId || !userId || !vote) {
       throw new AppError(errorcode.INVALID_REQUEST, "bad data request", 400);
     }
-
-    const result = await Feedbacks.findByIdAndUpdate(req.body.id, {
-      points: req.body.points,
-    });
-    await result.save();
-
-    res.status(200).send("successfully voted");
+    const user = await Users.findById(userId)
+    const feedback = await Feedbacks.findById(postId)
+    const username = feedback.votes.map(vote=> vote.user === user.username)
+    if(!user){
+      return res.send('user not found')
+    } else if( username.length){
+      return res.send('sorry you already voted to this featcher')
+    } else {
+          await Feedbacks.updateOne({_id:postId}, 
+          {$push:{"votes": {
+            user: user.username,
+            vote: vote
+           }
+         }});
+        res.status(200).send("successfully voted");
+    }
   }
 
   static async register(req, res) {
@@ -43,7 +49,6 @@ class PostControllers {
 
     let user = await Users.findOne({ email });
     if (user) {
-      // res.send({ error: true, message: "this email is already there!" });
       throw new AppError(
         errorcode.INVALID_SUBSCRIPTION,
         "this email is already there!",
@@ -84,6 +89,20 @@ class PostControllers {
       }
       res.send("logout seccessfully");
     });
+  }
+
+  static async upload(req, res) {
+        Feedbacks.updateOne(
+          {_id:req.body.id},
+          {$push:{"image":        {
+            name: req.file.originalname,
+            info: {
+                data: req.file.buffer,
+                contentType: req.file.mimetype
+            }
+      }}}) 
+        .then(() => res.send('Image was uploaded successfully'))
+          .catch(err => console.log(err))
   }
 }
 export default PostControllers;

@@ -2,9 +2,10 @@ import express from "express";
 import postRoutes from './routes/post-routes.js';
 import getRoutes from './routes/get-routes.js';
 import session from "express-session";
-import connectMongoDBSession from 'connect-mongodb-session'
-import dotenv from 'dotenv'
-import errorHandler from './middlewares/errorHandler.js'
+import connectMongoDBSession from 'connect-mongodb-session';
+import dotenv from 'dotenv';
+import errorHandler from './middlewares/errorHandler.js';
+
 dotenv.config()
 const app = express();
 

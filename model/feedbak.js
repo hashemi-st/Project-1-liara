@@ -19,15 +19,24 @@ const Schema = mongoose.Schema;
 const schemaFeedback = new Schema({
   title: String,
   body: String,
-  imgURL: String,
-  points: Number
+  image: [{
+    name: String,
+    info: {
+        data: Buffer,
+        contentType: String
+    }
+  }],
+  votes: [{
+    user : String,
+    vote: String
+  }]
 });
+
 
 const schemaUser = new Schema({
   username: String,
   email:String,
   password: String
-
 });
 
 export const Feedbacks = mongoose.model("Feedbacks", schemaFeedback);

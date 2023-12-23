@@ -6,7 +6,6 @@ class GetControllers {
         const result = await Feedbacks.find({});
         if(!result){
           throw new AppError(errorcode.DATABASE_DISCONNECTED, 'relation with database failed', 400)
-
         }
         res.status(200).send(result);
       }
