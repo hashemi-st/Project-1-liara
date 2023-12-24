@@ -1,4 +1,4 @@
-import { Feedbacks, Users } from "../model/feedbak.js";
+import { Feedbacks, Users, Votes } from "../model/feedbak.js";
 import AppError from "../utils/AppError.js";
 import bcrypt from "bcrypt";
 import { errorcode } from "../utils/errorCodes.js";
@@ -24,24 +24,21 @@ class PostControllers {
     if (!postId || !userId || !vote) {
       throw new AppError(errorcode.INVALID_REQUEST, "bad data request", 400);
     }
-    const user = await Users.findById(userId)
-    const feedback = await Feedbacks.findById(postId)
-    const username = feedback.votes.map(vote=> vote.user === user.username)
-    if(!user){
-      return res.send('user not found')
-    } else if( username.length){
+    const existingVote = await Votes.findOne({userId, postId})
+
+    if(existingVote){
       return res.send('sorry you already voted to this featcher')
     } else {
-          await Feedbacks.updateOne({_id:postId}, 
-          {$push:{"votes": {
-            user: user.username,
-            vote: vote
-           }
-         }});
-         lo
+      const myObject = new Votes({
+        userId,
+        postId,
+        vote
+      });
+        await myObject.save();
         res.status(200).send("successfully voted");
     }
-  }
+  }  
+
 
   static async register(req, res) {
     const { error, value } = registerValidate(req.body);

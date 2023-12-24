@@ -16,6 +16,7 @@ mongoose
 
 const Schema = mongoose.Schema;
 
+
 const schemaFeedback = new Schema({
   title: String,
   body: String,
@@ -25,13 +26,15 @@ const schemaFeedback = new Schema({
         data: Buffer,
         contentType: String
     }
-  }],
-  votes: [{
-    user : String,
-    vote: String
   }]
 });
 
+
+const schemaVotes = new Schema({
+    userId : String,
+    postId : String,
+    vote: String
+})
 
 const schemaUser = new Schema({
   username: String,
@@ -41,5 +44,6 @@ const schemaUser = new Schema({
 
 export const Feedbacks = mongoose.model("Feedbacks", schemaFeedback);
 export const Users = mongoose.model("Users", schemaUser);
+export const Votes = mongoose.model("Votes", schemaVotes);
 
 
