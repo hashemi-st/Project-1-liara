@@ -5,6 +5,8 @@ import session from "express-session";
 import connectMongoDBSession from 'connect-mongodb-session';
 import dotenv from 'dotenv';
 import errorHandler from './middlewares/errorHandler.js';
+import { logger } from "./middlewares/logger.js";
+
 
 dotenv.config()
 const app = express();
@@ -23,12 +25,12 @@ app.use(session({
     store : store
 })) 
 
-
 // app.use(express.urlencoded({ extended: true }));
 app.use(express.urlencoded({ extended: false }));
 
 app.use(express.json());
 
+app.use(logger)
 app.use(postRoutes)
 app.use(getRoutes)
 app.use(errorHandler)

@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import { errorcode } from "../utils/errorCodes.js";
 import { registerValidate, feedbackValidate } from "../utils/utils.js";
 
+
 class PostControllers {
   static async addFeedback(req, res) {
     const { error, value } = feedbackValidate(req.body);
@@ -37,6 +38,7 @@ class PostControllers {
             vote: vote
            }
          }});
+         lo
         res.status(200).send("successfully voted");
     }
   }
@@ -73,12 +75,13 @@ class PostControllers {
     } else {
       const isMatched = await bcrypt.compare(password, user.password);
       if (!isMatched) {
-        throw new AppError(301, "password is wrong!", 400);
+        throw new AppError(300, "password is wrong!", 400);
       }
     }
     req.session.isAuth = true;
 
     const { _id, username } = user;
+    // logger.info('aaa')
     res.status(200).json({ _id, username, email });
   }
 
