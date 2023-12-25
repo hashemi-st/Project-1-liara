@@ -6,5 +6,7 @@ const getRoutes = express.Router();
 
 
 getRoutes.get("/api/v1/feedback", tryCatch(GetControllers.getFeedback))
+getRoutes.get("/api/v1/logout", tryCatch(GetControllers.logout))
+
 
 export default getRoutes; 

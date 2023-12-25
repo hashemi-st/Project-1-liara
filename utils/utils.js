@@ -1,4 +1,5 @@
 import Joi from "joi";
+import jwt from "jsonwebtoken";
 
 const registerSchema = Joi.object({
     username: Joi.string().min(3).max(10).required(),
@@ -13,3 +14,10 @@ const feedbackSchema = Joi.object({
 const validator = (schema) => (payload) => schema.validate(payload, {abortEarly:false})
 export const registerValidate = validator(registerSchema)
 export const feedbackValidate = validator(feedbackSchema)
+
+export const maxAge = 3 * 24 * 60 * 60;
+export const createToken = (id, email) => {
+  return jwt.sign({ id, email }, process.env.JWT_SECRET, {
+    expiresIn: maxAge,
+  });
+};

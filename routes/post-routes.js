@@ -10,8 +10,9 @@ postRoutes.post("/api/v1/add-feedback", isAuth, tryCatch(PostControllers.addFeed
 postRoutes.post("/api/v1/add-vote", isAuth, tryCatch(PostControllers.addVote))
 postRoutes.post("/api/v1/register", tryCatch(PostControllers.register))
 postRoutes.post("/api/v1/login", tryCatch(PostControllers.login))
-postRoutes.post("/api/v1/logout", tryCatch(PostControllers.logout))
 postRoutes.post("/api/v1/upload-image", isAuth, upload, tryCatch(PostControllers.upload))
+postRoutes.post("/api/v1/forgot-password", tryCatch(PostControllers.forgotPassword))
+postRoutes.post("/api/v1/reset-password/:id/:token", tryCatch(PostControllers.resetPassword))
 
 
 export default postRoutes; 
