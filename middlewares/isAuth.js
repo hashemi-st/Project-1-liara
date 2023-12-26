@@ -1,10 +1,4 @@
-// export const isAuth = (req,res,next)=>{
-//     if(req.session.isAuth){
-//         next()
-//     } else {
-//         res.send({ error: true, message: "please login!" });
-//     }
-// }
+import jwt from "jsonwebtoken";
 
 export const isAuth = (req, res, next) => {
     const token = req.cookies.jwt;

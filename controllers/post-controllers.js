@@ -1,7 +1,5 @@
 import { Feedbacks, Users, Votes } from "../model/feedbak.js";
-import AppError from "../utils/AppError.js";
 import bcrypt from "bcrypt";
-import { errorcode } from "../utils/errorCodes.js";
 import {
   registerValidate,
   feedbackValidate,
@@ -10,6 +8,7 @@ import {
 } from "../utils/utils.js";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import boom from "@hapi/boom";
 
 class PostControllers {
   static async addFeedback(req, res) {
@@ -28,7 +27,7 @@ class PostControllers {
   static async addVote(req, res) {
     const { postId, userId, vote } = req.body;
     if (!postId || !userId || !vote) {
-      throw new AppError(errorcode.INVALID_REQUEST, "bad data request", 400);
+      throw boom.badRequest("invalid query!");
     }
     const existingVote = await Votes.findOne({ userId, postId });
 
@@ -53,11 +52,7 @@ class PostControllers {
 
     let user = await Users.findOne({ email });
     if (user) {
-      throw new AppError(
-        errorcode.INVALID_SUBSCRIPTION,
-        "this email is already there!",
-        400
-      );
+      throw boom.conflict("this email is already there!");
     }
     const hashed = await bcrypt.hash(password, 12);
     user = new Users({
@@ -73,24 +68,10 @@ class PostControllers {
     const { email, password } = req.body;
 
     const user = await Users.login(email, password);
-
-    // const user = await Users.findOne({ email });
-    // if (!user) {
-    //   throw new AppError(300, "email is wrong!", 400);
-    // } else {
-    //   const isMatched = await bcrypt.compare(password, user.password);
-    //   if (!isMatched) {
-    //     throw new AppError(300, "password is wrong!", 400);
-    //   }
-    // }
-
-    // req.session.isAuth = true;
-
     const token = createToken(user._id, user.email);
     res.cookie("jwt", token, { httpOnly: true, maxAge });
 
     const { _id, username } = user;
-    // logger.info('aaa')
     res.status(200).json({ _id, username, email });
   }
 
@@ -124,8 +105,9 @@ class PostControllers {
       email: user.email,
       id: user.id,
     };
+    //this is just a simple random token not a json web token
     const token = jwt.sign(payload, secret, { expiresIn: "15m" });
-    const link = `http://localhost:8000/reset-password/${user.id}/${token}`;
+    const link = `http://localhost:8000/api/v1/reset-password/${user.id}/${token}`;
 
     // const smtpConfig = {
     //   host: "sandbox.smtp.mailtrap.io",
@@ -135,7 +117,6 @@ class PostControllers {
     //     pass: "2cae8d4b7e8fc5",
     //   },
     // };
-
 
     const smtpConfig = {
       host: "smtp.c1.liara.email",
@@ -149,14 +130,14 @@ class PostControllers {
     const transporter = nodemailer.createTransport(smtpConfig);
     const mailOptions = {
       from: "info@picktopic.ir",
-      to: "hashemi.st@gmail.com",
+      to: "user3@example.com",
       subject: "Reset your password",
       text: link,
     };
 
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
-        res.send(error)
+        res.send(error);
       } else {
         res.json("link reset-password sent to your email");
       }
@@ -166,6 +147,12 @@ class PostControllers {
   static async resetPassword(req, res) {
     const { id, token } = req.params;
     const { password } = req.body;
+
+    const user = await Users.findOne({ _id: id });
+    if (!user) {
+      res.send("user there is not exists");
+    }
+    const secret = process.env.JWT_SECRET + user.password;
 
     jwt.verify(token, secret, (err, decoded) => {
       if (err) {

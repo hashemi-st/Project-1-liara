@@ -1,24 +1,17 @@
- import AppError from '../utils/AppError.js'
+const errorHandler = (error, req, res, next) => {
+  if (error.name === "ValidationError") {
+    return res.status(400).send({
+      type: "ValidationError",
+      details: error.details,
+    });
+  }
+   else if (error.isBoom) {
+    const { statusCode, payload } = error.output;
+    res.status(statusCode).json(payload);
+  } 
+  else {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
 
- const errorHandler = (error, req, res, next) =>{
-    console.log(error)
-
-    if(error.name === 'ValidationError'){
-        return res.status(400).send({
-            type:"ValidationError",
-            details: error.details
-
-        })
-    }
-if(error instanceof AppError){
-    return res.status(error.statusCode).json({
-        errorCode: error.errorCode,
-        errorMessage: error.message,
-        statusCode: error.statusCode
-
-    })
-}
-    return res.status(500).send('something is wrong')
-}
-
-export default errorHandler
+export default errorHandler;

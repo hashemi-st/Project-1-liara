@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import dotenv from 'dotenv'
 import bcrypt from "bcrypt";
+import boom from '@hapi/boom'
+
 
 dotenv.config()
 // connect to database
@@ -12,8 +14,8 @@ mongoose
     console.log("Connected!");
   })
   .catch((error) => {
-    console.error("Failed to connect!", error);
-  });
+    console.log("Database is disconnected!", error);
+   });
 
 const Schema = mongoose.Schema;
 
@@ -44,18 +46,16 @@ const userSchema = new Schema({
 });
 userSchema.statics.login = async function(email,password){
   const user = await this.findOne({email})
-  if(user){
+  if (!user) {
+    throw boom.badRequest('this email is not registered!')
+  }else{
       const auth = await bcrypt.compare(password, user.password)
       if(auth){
           return user
       }
-      throw Error("password is incorrect!")
+      throw boom.badRequest('password is wrong!')
   }
-  throw Error("email is incorrect!")
 }
-
-
-
 
 export const Feedbacks = mongoose.model("Feedbacks", feedbackSchema);
 export const Users = mongoose.model("Users", userSchema);
