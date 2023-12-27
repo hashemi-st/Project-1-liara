@@ -21,6 +21,7 @@ const Schema = mongoose.Schema;
 
 
 const feedbackSchema = new Schema({
+  userId: String,
   title: String,
   body: String,
   image: [{
@@ -60,5 +61,7 @@ userSchema.statics.login = async function(email,password){
 export const Feedbacks = mongoose.model("Feedbacks", feedbackSchema);
 export const Users = mongoose.model("Users", userSchema);
 export const Votes = mongoose.model("Votes", votesSchema);
+
+
 
 

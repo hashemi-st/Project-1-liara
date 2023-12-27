@@ -16,6 +16,7 @@ class PostControllers {
     if (error) throw error;
 
     const myObject = new Feedbacks({
+      userId: req.user.id,
       title: value.title,
       body: value.body,
     });
@@ -25,8 +26,9 @@ class PostControllers {
   }
 
   static async addVote(req, res) {
-    const { postId, userId, vote } = req.body;
-    if (!postId || !userId || !vote) {
+    const { postId, vote } = req.body;
+    const userId = req.user.id;
+    if (!postId || !vote) {
       throw boom.badRequest("invalid query!");
     }
     const existingVote = await Votes.findOne({ userId, postId });
@@ -75,37 +77,15 @@ class PostControllers {
     res.status(200).json({ _id, username, email });
   }
 
-  // static async upload(req, res) {
-  //   Feedbacks.updateOne(
-  //     { _id: req.body.id },
-  //     {
-  //       $push: {
-  //         image: {
-  //           name: req.file.originalname,
-  //           info: {
-  //             data: req.file.buffer,
-  //             contentType: req.file.mimetype,
-  //           },
-  //         },
-  //       },
-  //     }
-  //   )
-  //     .then(() => res.send("Image was uploaded successfully"))
-  //     .catch((err) => {
-  //       console.log(err);
-  //       throw boom.badRequest("invalid query!");
-  //     });
-  // }
-
   static async upload(req, res) {
-    const id = req.body.id
-    const post = await Feedbacks.findOne({_id:id})
-    if (!post){
+    const id = req.body.postId;
+    const post = await Feedbacks.findOne({ _id: id });
+    if (!post) {
       throw boom.badRequest("this post was not found!");
-    } 
+    }
     try {
       Feedbacks.updateOne(
-        { _id: req.body.id },
+        { _id: id },
         {
           $push: {
             image: {
@@ -117,8 +97,12 @@ class PostControllers {
             },
           },
         }
-      );
-      res.send("Image was uploaded successfully");
+      )
+        .then(() => res.send("Image was uploaded successfully"))
+        .catch((err) => {
+          console.log(err);
+          throw boom.badRequest("invalid query!");
+        });
     } catch (error) {
       console.log(error);
       throw boom.badRequest("file not found");
@@ -170,7 +154,7 @@ class PostControllers {
       if (error) {
         res.send(error);
       } else {
-        res.json("link reset-password sent to your email");
+        res.json({ message: "link reset-password sent to your email" });
       }
     });
   }
@@ -193,7 +177,9 @@ class PostControllers {
           .hash(password, 12)
           .then((hash) => {
             Users.findByIdAndUpdate({ _id: id }, { password: hash })
-              .then((u) => res.send("password changed successfully"))
+              .then((u) =>
+                res.json({ message: "password changed successfully" })
+              )
               .catch((err) => res.send({ status: err }));
           })
           .catch((err) => res.send({ status: err }));
