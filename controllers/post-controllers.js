@@ -75,23 +75,54 @@ class PostControllers {
     res.status(200).json({ _id, username, email });
   }
 
+  // static async upload(req, res) {
+  //   Feedbacks.updateOne(
+  //     { _id: req.body.id },
+  //     {
+  //       $push: {
+  //         image: {
+  //           name: req.file.originalname,
+  //           info: {
+  //             data: req.file.buffer,
+  //             contentType: req.file.mimetype,
+  //           },
+  //         },
+  //       },
+  //     }
+  //   )
+  //     .then(() => res.send("Image was uploaded successfully"))
+  //     .catch((err) => {
+  //       console.log(err);
+  //       throw boom.badRequest("invalid query!");
+  //     });
+  // }
+
   static async upload(req, res) {
-    Feedbacks.updateOne(
-      { _id: req.body.id },
-      {
-        $push: {
-          image: {
-            name: req.file.originalname,
-            info: {
-              data: req.file.buffer,
-              contentType: req.file.mimetype,
+    const id = req.body.id
+    const post = await Feedbacks.findOne({_id:id})
+    if (!post){
+      throw boom.badRequest("this post was not found!");
+    } 
+    try {
+      Feedbacks.updateOne(
+        { _id: req.body.id },
+        {
+          $push: {
+            image: {
+              name: req.file.originalname,
+              info: {
+                data: req.file.buffer,
+                contentType: req.file.mimetype,
+              },
             },
           },
-        },
-      }
-    )
-      .then(() => res.send("Image was uploaded successfully"))
-      .catch((err) => console.log(err));
+        }
+      );
+      res.send("Image was uploaded successfully");
+    } catch (error) {
+      console.log(error);
+      throw boom.badRequest("file not found");
+    }
   }
 
   static async forgotPassword(req, res) {
