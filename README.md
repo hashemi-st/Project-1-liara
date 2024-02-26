@@ -5,7 +5,7 @@ Canny's Clone
 This project aims to create a clone of the Canny platform, which is a feedback management system. The clone will allow users to submit feedback, vote on ideas, and view relevant content related to products or services.
 
 ### Features
-**Authentication:**
+-**Authentication:**
 
 Implement authentication functionality to allow users to register, login, and manage their accounts securely.
 In addition to basic authentication functionality, this project incorporates password recovery capability using SMTP (Simple Mail Transfer Protocol). This feature enables users to recover their forgotten passwords securely through email
