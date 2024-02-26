@@ -7,28 +7,28 @@ This project aims to create a clone of the Canny platform, which is a feedback m
 ### Features
 - **Authentication:**
 
-Implement authentication functionality to allow users to register, login, and manage their accounts securely.
+ Implement authentication functionality to allow users to register, login, and manage their accounts securely.
 In addition to basic authentication functionality, this project incorporates password recovery capability using SMTP (Simple Mail Transfer Protocol). This feature enables users to recover their forgotten passwords securely through email
 
 - **Database Integration:** 
 
-Integrate a database system (e.g., MongoDB) to store user information, feedback submissions, voting data, and other relevant information securely.
+ Integrate a database system (e.g., MongoDB) to store user information, feedback submissions, voting data, and other relevant information securely.
 
 - **Error Handling:** 
 
-Develop robust error handling mechanisms to gracefully handle exceptions, errors, and unexpected behaviors within the application. This involves implementing appropriate error codes, error messages, and error logging to assist in debugging and troubleshooting.
+ Develop robust error handling mechanisms to gracefully handle exceptions, errors, and unexpected behaviors within the application. This involves implementing appropriate error codes, error messages, and error logging to assist in debugging and troubleshooting.
 
 - **Logging:** 
 
-set up logging mechanisms to record user actions and events happening within the platform.
+ set up logging mechanisms to record user actions and events happening within the platform.
 
 - **Versioning APIs:** 
 
-Implement versioning for APIs to ensure compatibility and smooth transitions between different versions of the backend services. This includes managing API endpoints, versioning schemes, and backward compatibility.
+ Implement versioning for APIs to ensure compatibility and smooth transitions between different versions of the backend services. This includes managing API endpoints, versioning schemes, and backward compatibility.
 
 - **Validation:**
 
-this project includes robust data validation mechanisms to ensure data integrity and adherence to predefined standards. Data validation encompasses various aspects, including uniqueness, mandatory fields, and format requirements, to maintain the quality and consistency of the data stored within the system.
+ this project includes robust data validation mechanisms to ensure data integrity and adherence to predefined standards. Data validation encompasses various aspects, including uniqueness, mandatory fields, and format requirements, to maintain the quality and consistency of the data stored within the system.
 
 ## Technologies Used
 - Node.js
@@ -52,6 +52,6 @@ this project includes robust data validation mechanisms to ensure data integrity
 
 
 ## Usage
-Start the server:
+1. Start the server:
     ```bash
     npm start
